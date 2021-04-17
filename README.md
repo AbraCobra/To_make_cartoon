@@ -55,8 +55,10 @@ int main()                         //*Начало работы*
 ```
 
 Посмотрите  как выглядит программа рисующая кактус полностью:
-[cactus.cpp](https://github.com/AbraCobra/make_cartoons/blob/main/cactus.cpp)
+[cactus.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/cactus.cpp)
 
+А вот результат:
+![Кактус](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/Cactus1.png)
 
 ## Этап 3. На помощь приходит функция!
 
@@ -112,11 +114,11 @@ void Cactus_drawer (int x, int y)
     }
 ```
 
-[cactus_parameters.cpp](https://github.com/AbraCobra/make_cartoons/blob/main/cactus_parameters.cpp)
+[cactus_parameters.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/cactus_parameters.cpp)
 
 Теперь мы можем рисовать наш объект в любой точке холста!
 
-![Кактус с параметрами](https://github.com/AbraCobra/make_cartoons/blob/main/Pictures/Cactus_prog2.png)
+![Кактус с параметрами](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/Cactus_par.png)
 
 
 ## Этап 4. Добавим параметры размера
@@ -149,9 +151,9 @@ void Cactus_drawer (int x, int y, double sizeX, double sizeY)
 
 Теперь можно посмотреть полностью код с новыми дополнительными параметрами и оценить какие возможности они дают.
 
-[cactus_par_of_size.cpp](https://github.com/AbraCobra/make_cartoons/blob/main/cactus_par_of_size.cpp)
+[cactus_par_of_size.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/cactus_par_of_size.cpp)
 
-![Любой размер!](https://github.com/AbraCobra/make_cartoons/blob/main/Pictures/Cactus_prog3.png)
+![Любой размер!](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/Cactus_par_size.png)
 
 ## Этап 5. Параметры эмоций
 
@@ -223,9 +225,9 @@ int main()
     }
 ```
 Посмотри полный код рисования 4 - х разных кактусов (или почти разных):
-[cactus_more_parametres.cpp](https://github.com/AbraCobra/make_cartoons/blob/main/cactus_more_parameters.cpp)
+[cactus_more_parametres.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/cactus_more_parameters.cpp)
 
-![Разные эмоции](https://github.com/AbraCobra/make_cartoons/blob/main/Pictures/Cactus_prog4.png)
+![Разные эмоции](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/Cactus_more_par.png)
 
 ## Этап 6. Пора зациклиться!
 
@@ -263,11 +265,11 @@ while (выполняется условие)
 размер глаз и зрачков, положение рта.
 И вот что мы получим оформив один только вызов в цикле while.
 
-![Много разных кактусов](https://github.com/AbraCobra/make_cartoons/blob/main/Pictures/To_many_cactuses.png)
+![Много разных кактусов](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/Cactus_to%20many.png)
 
 Посмотри код
 
-[To_many_cactuses.cpp](https://github.com/AbraCobra/make_cartoons/blob/main/To_many_cactuses.cpp)
+[To_many_cactuses.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/To_many_cactuses.cpp)
 
 ## Этап 7. Анимация
 
@@ -295,7 +297,98 @@ void Cactus_moving ()
         }
 
 Здесь у нас меняется только координата X, поэтому Кактус просто
-перемещаеся горизонтально по экрану.
+перемещается горизонтально по экрану.
 
 Посмотри код
-[]
+[cactus_iteration.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/cactus_iteration.cpp)
+
+Теперь можно немного подумать над сценарием. Добавим кактусу цветы.
+Пусть он улыбается, когда они начнут расцветать и огорчится, когда они опадут. Здесь пригодятся наши возможности менять эмоции.
+Это будут отдельные сцены, отдельные функции.
+Прототипы наших функций:
+
+```C++
+# include "TXLib.h"
+
+void Cactus_drawer (int x, int y, double sizeX, double sizeY,
+                    int eyebrows_UP,
+                    int eyesCRAZYleft, int eyesPUPILleft,
+                    int eyesCRAZYright, int eyesPUPILright,
+                    int mouthLOWERpoint);
+void Flower_draw   (int x, int y, double sizeX,
+                    double sizeY,  COLORREF flowerColor);
+void Cactus_moving_Happy();
+void Cactus_moving_Sad();
+```
+У нас есть функция рисующая цветы с параметрами координат, параметрами размера, и параметр цвета.
+
+Две нижние функции будут содержать отдельные циклы создающие обе части
+нашего мультика.
+В первой функции цветы расцветают, а во второй опадают.
+Теперь переменная t будет управлять и движением цветов и мимикой нашего героя.
+Первая сцена:
+
+```C+
+void Cactus_moving_Happy()
+    {
+    txBegin();
+
+    int t = 0;
+    while (t <= 70)
+        {
+        txClear();
+        txSetFillColor (TX_WHITE);
+        POINT fon [4] = {{0, 0}, {1000, 0}, {1000, 1000}, {0, 1000}};
+        txPolygon (fon, 4);
+
+        Cactus_drawer ( 200, 500, 0.4, 0.4, 20 - t/2,  10 - t/10,
+                        1,  10 - t/10,   1,  - 25 + t/2);
+        Flower_draw   ( 350, 330, 0.01*t, 0.01*t, TX_PINK);
+        Flower_draw   ( 375, 355, 0.01*t, 0.01*t, TX_YELLOW);
+
+        txSleep (10);
+        t++;
+        }
+    txEnd();
+   }
+```
+
+Вторая сцена:
+
+```C++
+void Cactus_moving_Sad ()
+    {
+    txBegin();
+
+    int t = 0;
+    while (t <= 70)
+        {
+        txClear();
+        txSetFillColor (TX_WHITE);
+        POINT fon [4] = {{0, 0}, {1000, 0}, {1000, 1000}, {0, 1000}};
+        txPolygon (fon, 4);
+
+        Cactus_drawer ( 200, 500, 0.4, 0.4, 5 + t/3, 1 + t/3, 1,  
+                        1 + t/3, 1, 20 - t);;
+        Flower_draw   ( 350, 330 + 4*t, 0.5, 0.5, TX_PINK);
+        Flower_draw   ( 375, 355 + 4*t, 0.5, 0.5, TX_YELLOW);
+
+        txSleep (10);
+        t++;
+        }
+
+    txEnd();
+    }
+```
+Ниже представлены скриншоты мультика, но лучше конечно взять файл и посмотреть.
+Полный код:
+[emotional_cactus.cpp](https://github.com/AbraCobra/To_make_cartoon/blob/main/emotional_cactus.cpp)
+
+![EMO_shot1.png](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/EMO_shot1.png)
+
+![EMO_Shot2.png](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/EMO_Shot2.png)
+
+![EMO_Shot3.png](https://github.com/AbraCobra/To_make_cartoon/blob/main/Pictures/EMO_Shot3.png)
+
+В качестве примера можно посмотреть и этот пример:
+[Abramova_Irina_mult_Full_Vers.cpp](https://github.com/AbraCobra/Cartoon_Chuck_journey/blob/main/Abramova_Irina_mult_Full_Vers.cpp)
